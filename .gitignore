@@ -1,0 +1,58 @@
+# ===========================
+# General
+# ===========================
+.DS_Store
+Thumbs.db
+
+# ===========================
+# Node.js
+# ===========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dist/
+build/
+*.env
+
+# ===========================
+# MongoDB local data (if any)
+# ===========================
+data/
+dump/
+
+# ===========================
+# Frontend (static hosting friendly)
+# ===========================
+*.log
+*.lock
+.vscode/
+coverage/
+*.zip
+
+# ===========================
+# Eclipse specific
+# ===========================
+*.classpath
+*.project
+.settings/
+.p2/
+.metadata/
+target/
+bin/
+
+# ===========================
+# OS Generated
+# ===========================
+*.swp
+*.swo
+ehthumbs.db
+Icon?
+Desktop.ini
+
+* text=auto
+*.js text eol=lf
+*.json text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.env text eol=lf

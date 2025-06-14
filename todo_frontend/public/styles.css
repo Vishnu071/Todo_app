@@ -1,0 +1,481 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
+
+:root {
+  /* Color palette */
+  --color-bg-light: #e0f7fa; /* Light cyan */
+  --color-bg-dark: #1a1a1a; /* Darker background for dark mode */
+  --color-text-light: #1f2937; /* Dark gray for light mode text */
+  --color-text-dark: #e5e7eb; /* Light gray for dark mode text */
+  --color-primary: #4f46e5; /* Deep blue */
+  --color-primary-light: #818cf8; /* Light blue */
+  --color-accent: #22d3ee; /* Bright cyan */
+  --color-border: #d1d5db; /* Light gray for borders */
+  --color-border-dark: #374151; /* Dark gray for dark mode borders */
+  --color-card-bg-light: #f0f4f8; /* Light card background */
+  --color-card-bg-dark: #2c2c2c; /* Darker card background */
+  --color-success: #10b981; /* Green for success */
+  --color-danger: #ef4444; /* Red for danger */
+  --color-warning: #f59e0b; /* Yellow for warnings */
+
+  /* Gradient Background */
+  --gradient-bg-light: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+  --gradient-bg-dark: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
+
+  /* Spacing */
+  --spacing-xs: 8px;
+  --spacing-sm: 16px;
+  --spacing-md: 24px;
+  --spacing-lg: 32px;
+  --spacing-xl: 48px;
+
+  /* Border radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  /* Typography */
+  --font-family-base: "Inter", sans-serif;
+  --font-size-base: 16px;
+  --font-size-lg: 20px;
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Transition */
+  --transition-fast: 0.2s ease;
+  --transition-medium: 0.3s ease;
+}
+
+/*
+Reset
+*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+body {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  margin: 0;
+  background: var(--gradient-bg-light); /* Use gradient for light mode */
+  color: var(--color-text-light);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: background var(--transition-medium),
+    color var(--transition-medium);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body.dark-mode {
+  background: var(--gradient-bg-dark); /* Use gradient for dark mode */
+  color: var(--color-text-dark);
+}
+
+.container {
+  max-width: 980px;
+  margin: var(--spacing-lg) auto var(--spacing-xl);
+  padding: 0 var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  flex-grow: 1;
+}
+
+/* Header */
+header h1 {
+  font-weight: var(--font-weight-bold);
+  font-size: 2.75rem;
+  margin-bottom: var(--spacing-md);
+  text-align: center;
+  color: var(--color-primary);
+  user-select: none;
+  text-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+}
+
+/* Accessible visually hidden class */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Auth Section */
+.auth-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-card-bg-light);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  transition: box-shadow var(--transition-medium);
+}
+body.dark-mode .auth-section {
+  background-color: var(--color-card-bg-dark);
+  border-color: var(--color-border-dark);
+  box-shadow: none;
+}
+.auth-section input[type="email"],
+.auth-section input[type="password"] {
+  flex: 1 1 200px;
+  padding: var(--spacing-sm);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  transition: border-color var(--transition-medium);
+  min-width: 250px;
+  max-width: 320px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.auth-section input[type="email"]:focus,
+.auth-section input[type="password"]:focus {
+  border-color: var(--color-primary);
+  outline-offset: 2px;
+  outline-color: var(--color-primary-light);
+  outline-style: solid;
+  outline-width: 2px;
+}
+
+.auth-section button {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: background-color var(--transition-medium),
+    transform var(--transition-fast);
+  min-width: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
+  user-select: none;
+  white-space: nowrap;
+}
+.auth-section button:hover,
+.auth-section button:focus {
+  background-color: var(--color-primary-light);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.6);
+  transform: translateY(-3px);
+  outline: none;
+}
+
+/* Task Section */
+.task-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* Controls form */
+.controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--spacing-md);
+  align-items: center;
+  background-color: var(--color-card-bg-light);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
+  transition: box-shadow var(--transition-medium);
+}
+body.dark-mode .controls {
+  background-color: var(--color-card-bg-dark);
+  box-shadow: none;
+}
+.controls input[type="text"],
+.controls input[type="date"],
+.controls select {
+  width: 100%;
+  padding: var(--spacing-sm);
+  font-size: 1rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition-medium);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  min-width: 220px;
+}
+.controls input[type="text"]:focus,
+.controls input[type="date"]:focus,
+.controls select:focus {
+  border-color: var(--color-primary);
+  outline-offset: 2px;
+  outline-color: var(--color-primary-light);
+  outline-style: solid;
+  outline-width: 2px;
+}
+.controls button {
+  padding: var(--spacing-sm);
+  background-color: var(--color-accent);
+  color: var(--color-bg-light);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: background-color var(--transition-medium),
+    transform var(--transition-fast);
+  box-shadow: 0 4px 14px rgba(34, 211, 238, 0.6);
+  min-width: 140px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+.controls button:hover,
+.controls button:focus {
+  background-color: #0ea5e9;
+  box-shadow: 0 8px 28px rgba(14, 165, 233, 0.85);
+  transform: translateY(-3px);
+  outline: none;
+}
+
+/* Task List grid */
+#taskList {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-lg);
+  outline: none;
+}
+
+@media (min-width: 768px) {
+  #taskList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1024px) {
+  #taskList {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Task card advanced styles */
+.task {
+  background-color: var(--color-card-bg-light);
+  color: var(--color-text-light);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.07);
+  transition: box-shadow var(--transition-medium),
+    transform var(--transition-medium);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  min-height: 180px;
+  user-select: none;
+  cursor: grab;
+}
+body.dark-mode .task {
+  background-color: var(--color-card-bg-dark);
+  color: var(--color-text-dark);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.9);
+}
+.task:active {
+  cursor: grabbing;
+}
+.task:hover,
+.task:focus-within {
+  box-shadow: 0 18px 52px rgba(0, 0, 0, 0.15);
+  transform: translateY(-6px);
+  outline: none;
+  z-index: 5;
+}
+
+.task h3 {
+  font-size: 1.4rem;
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-primary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.task p {
+  margin: 0 0 var(--spacing-xs) 0;
+  color: var(--color-text-light);
+  flex-grow: 1;
+  font-size: 1rem;
+  line-height: 1.4;
+  overflow-wrap: break-word;
+}
+body.dark-mode .task p {
+  color: var(--color-text-dark);
+}
+
+/* Metadata badges container */
+.task-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.badge {
+  padding: 4px 10px;
+  border-radius: var(--radius-lg);
+  font-size: 0.8rem;
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  user-select: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  white-space: nowrap;
+}
+.badge.status-pending {
+  background-color: #fbbf24; /* amber 400 */
+  color: #92400e;
+}
+.badge.status-inprogress {
+  background-color: #3b82f6; /* blue 500 */
+  color: white;
+}
+.badge.status-completed {
+  background-color: #10b981; /* green 500 */
+  color: white;
+}
+.badge.priority-high {
+  background-color: var(--color-danger);
+  color: white;
+}
+.badge.priority-medium {
+  background-color: var(--color-warning);
+  color: black;
+}
+.badge.priority-low {
+  background-color: var(--color-success);
+  color: white;
+}
+
+/* Buttons */
+.task button {
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: 0.9rem;
+  font-weight: var(--font-weight-semibold);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--transition-medium),
+    transform var(--transition-fast);
+  min-width: 90px;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.07);
+  user-select: none;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+}
+.task button.complete-btn {
+  background-color: var(--color-success);
+}
+.task button.complete-btn:hover,
+.task button.complete-btn:focus {
+  background-color: #059669; /* green-600 */
+  transform: translateY(-3px);
+  outline-offset: 2px;
+}
+.task button.delete-btn {
+  background-color: var(--color-danger);
+}
+.task button.delete-btn:hover,
+.task button.delete-btn:focus {
+  background-color: #b91c1c; /* red-700 */
+  transform: translateY(-3px);
+  outline-offset: 2px;
+}
+
+/* Deadline */
+.task time {
+  font-style: italic;
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+  user-select: none;
+}
+body.dark-mode .task time {
+  color: var(--color-text-dark);
+}
+
+/* Completed task style */
+.task.completed {
+  opacity: 0.6;
+  text-decoration: line-through;
+  background-color: #d1fae5; /* green-50 */
+}
+body.dark-mode .task.completed {
+  background-color: #064e3b; /* green-900 */
+}
+
+/* Progress bar */
+.progress-bar-container {
+  width: 100%;
+  height: 28px;
+  background: var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: inset 0 3px 6px rgba(255, 255, 255, 0.25);
+  margin-top: var(--spacing-lg);
+}
+.progress-bar {
+  height: 100%;
+  background: var(--color-success);
+  width: 0%;
+  border-radius: var(--radius-lg);
+  transition: width 0.5s ease;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg-light);
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary);
+  border-radius: var(--radius-lg);
+  border: 3px solid var(--color-bg-light);
+}
+body.dark-mode ::-webkit-scrollbar-track {
+  background: var(--color-bg-dark);
+}
+body.dark-mode ::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary-light);
+  border: 3px solid var(--color-bg-dark);
+}
+
+/* Accessibility - Focus outlines */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/* Drag and Drop Style */
+.task.dragging {
+  opacity: 0.6;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transform: scale(1.02);
+  cursor: grabbing;
+  z-index: 10;
+}
+
+/* Utility: Hidden */
+.hidden {
+  display: none !important;
+}

@@ -1,0 +1,37 @@
+{
+  "name": "todo_app_full",
+  "version": "1.0.0",
+  "description": "Advanced To-Do List Fullstack App",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vishnu071/todo_app_full.git"
+  },
+  "keywords": [
+    "todo",
+    "task-manager",
+    "mongodb",
+    "express"
+  ],
+  "author": "Vishnu M",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Vishnu071/todo_app_full/issues"
+  },
+  "homepage": "https://github.com/Vishnu071/todo_app_full#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.15.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
