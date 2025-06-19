@@ -1,160 +1,246 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>Admin Dashboard</title>
-  <style>
-    body { font-family: sans-serif; padding: 20px; }
-    h2 { margin-top: 30px; }
-    li { margin-bottom: 10px; }
-    button {
-      margin-left: 8px;
-      padding: 4px 8px;
-      background: #444;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover { background: #222; }
-  </style>
-</head>
-<body>
-  <h1>Admin Dashboard</h1>
-  <button onclick="logout()">Logout</button>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: "Segoe UI", sans-serif;
+        background: #f0f2f5;
+        color: #333;
+      }
 
-  <h2>Users</h2>
-  <ul id="userList"></ul>
+      .container {
+        max-width: 960px;
+        margin: 40px auto;
+        padding: 20px 30px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
 
-  <h2>All Tasks</h2>
-  <ul id="taskList"></ul>
+      h1,
+      h2 {
+        text-align: center;
+        color: #2c3e50;
+      }
 
-  <script>
-    const token = localStorage.getItem("adminToken");
-  
-    if (!token) {
-      alert("Please log in as admin.");
-      window.location.href = "/admin.html";
-    }
-  
-    function logout() {
-      localStorage.removeItem("adminToken");
-      window.location.href = "/admin.html";
-    }
-  
-    async function fetchUsers() {
-      try {
-        const res = await fetch("/api/admin/users", {
-          headers: { Authorization: "Bearer " + token }
-        });
-  
-        const users = await res.json();
-  
-        if (!Array.isArray(users)) {
-          console.error("Expected users array, got:", users);
-          alert("⚠️ Unauthorized or session expired. Please log in again.");
-          logout();
-          return;
-        }
-  
-        const list = document.getElementById("userList");
-        list.innerHTML = "";
-  
-        users.forEach(user => {
-          const li = document.createElement("li");
-          li.textContent = user.username + (user.isAdmin ? " (Admin)" : "");
-  
-          const delBtn = document.createElement("button");
-          delBtn.textContent = "Delete";
-          delBtn.onclick = async () => {
-            await fetch(`/api/admin/users/${user._id}`, {
-              method: "DELETE",
-              headers: { Authorization: "Bearer " + token }
-            });
-            fetchUsers();
-          };
-  
-          if (!user.isAdmin) {
-            const promoteBtn = document.createElement("button");
-            promoteBtn.textContent = "Promote to Admin";
-            promoteBtn.onclick = async () => {
-              await fetch(`/api/admin/users/promote/${user._id}`, {
-                method: "PUT",
-                headers: { Authorization: "Bearer " + token }
+      .logout-btn {
+        display: block;
+        margin: 20px auto 30px;
+        padding: 10px 20px;
+        background: #e74c3c;
+        border: none;
+        color: white;
+        font-weight: bold;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      .logout-btn:hover {
+        background: #c0392b;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 20px;
+      }
+
+      li {
+        background: #f8f9fa;
+        padding: 14px 16px;
+        margin-bottom: 12px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .user-info {
+        font-weight: bold;
+        color: #34495e;
+        flex: 1;
+      }
+
+      .btn {
+        margin: 4px;
+        padding: 6px 12px;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s ease;
+      }
+
+      .btn-delete {
+        background-color: #e74c3c;
+      }
+      .btn-delete:hover {
+        background-color: #c0392b;
+      }
+
+      .btn-edit {
+        background-color: #f39c12;
+      }
+      .btn-edit:hover {
+        background-color: #e67e22;
+      }
+
+      .btn-promote {
+        background-color: #2ecc71;
+      }
+      .btn-promote:hover {
+        background-color: #27ae60;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Admin Dashboard</h1>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+
+      <h2>Users</h2>
+      <ul id="userList"></ul>
+
+      <h2>All Tasks</h2>
+      <ul id="taskList"></ul>
+    </div>
+
+    <script>
+      const token = localStorage.getItem("adminToken");
+      if (!token) {
+        alert("Please log in as admin.");
+        window.location.href = "/admin.html";
+      }
+
+      function logout() {
+        localStorage.removeItem("adminToken");
+        window.location.href = "/admin.html";
+      }
+
+      async function fetchUsers() {
+        try {
+          const res = await fetch("/api/admin/users", {
+            headers: { Authorization: "Bearer " + token },
+          });
+          const users = await res.json();
+
+          if (!Array.isArray(users)) return logout();
+
+          const list = document.getElementById("userList");
+          list.innerHTML = "";
+
+          users.forEach((user) => {
+            const li = document.createElement("li");
+            const info = document.createElement("span");
+            info.className = "user-info";
+            info.textContent = user.username + (user.isAdmin ? " (Admin)" : "");
+            li.appendChild(info);
+
+            const delBtn = document.createElement("button");
+            delBtn.className = "btn btn-delete";
+            delBtn.textContent = "Delete";
+            delBtn.onclick = async () => {
+              await fetch(`/api/admin/users/${user._id}`, {
+                method: "DELETE",
+                headers: { Authorization: "Bearer " + token },
               });
               fetchUsers();
             };
-            li.appendChild(promoteBtn);
-          }
-  
-          const editBtn = document.createElement("button");
-          editBtn.textContent = "Edit";
-          editBtn.onclick = () => {
-            const newUsername = prompt("New username:", user.username);
-            const newPassword = prompt("New password:");
-            if (newUsername && newPassword) {
-              fetch(`/api/admin/users/${user._id}`, {
-                method: "PUT",
-                headers: {
-                  Authorization: "Bearer " + token,
-                  "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ username: newUsername, password: newPassword })
-              }).then(fetchUsers);
+
+            const editBtn = document.createElement("button");
+            editBtn.className = "btn btn-edit";
+            editBtn.textContent = "Edit";
+            editBtn.onclick = () => {
+              const newUsername = prompt("New username:", user.username);
+              const newPassword = prompt("New password:");
+              if (newUsername && newPassword) {
+                fetch(`/api/admin/users/${user._id}`, {
+                  method: "PUT",
+                  headers: {
+                    Authorization: "Bearer " + token,
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    username: newUsername,
+                    password: newPassword,
+                  }),
+                }).then(fetchUsers);
+              }
+            };
+
+            li.appendChild(delBtn);
+            li.appendChild(editBtn);
+
+            if (!user.isAdmin) {
+              const promoteBtn = document.createElement("button");
+              promoteBtn.className = "btn btn-promote";
+              promoteBtn.textContent = "Promote to Admin";
+              promoteBtn.onclick = async () => {
+                await fetch(`/api/admin/users/promote/${user._id}`, {
+                  method: "PUT",
+                  headers: { Authorization: "Bearer " + token },
+                });
+                fetchUsers();
+              };
+              li.appendChild(promoteBtn);
             }
-          };
-  
-          li.appendChild(delBtn);
-          li.appendChild(editBtn);
-          list.appendChild(li);
-        });
-      } catch (err) {
-        console.error("User fetch error:", err);
-      }
-    }
-  
-    async function fetchTasks() {
-      try {
-        const res = await fetch("/api/admin/tasks", {
-          headers: { Authorization: "Bearer " + token }
-        });
-  
-        const tasks = await res.json();
-  
-        if (!Array.isArray(tasks)) {
-          console.error("Expected tasks array, got:", tasks);
-          alert("⚠️ Unauthorized or session expired. Please log in again.");
-          logout();
-          return;
+
+            list.appendChild(li);
+          });
+        } catch (err) {
+          console.error("User fetch error:", err);
         }
-  
-        const list = document.getElementById("taskList");
-        list.innerHTML = "";
-  
-        tasks.forEach(task => {
-          const li = document.createElement("li");
-          li.textContent = `${task.taskName} (User: ${task.userId?.username || "Unknown"})`;
-  
-          const delBtn = document.createElement("button");
-          delBtn.textContent = "Delete";
-          delBtn.onclick = async () => {
-            await fetch(`/api/admin/tasks/${task._id}`, {
-              method: "DELETE",
-              headers: { Authorization: "Bearer " + token }
-            });
-            fetchTasks();
-          };
-  
-          li.appendChild(delBtn);
-          list.appendChild(li);
-        });
-      } catch (err) {
-        console.error("Task fetch error:", err);
       }
-    }
-  
-    fetchUsers();
-    fetchTasks();
-  </script>
-  
-  </script>
-</body>
+
+      async function fetchTasks() {
+        try {
+          const res = await fetch("/api/admin/tasks", {
+            headers: { Authorization: "Bearer " + token },
+          });
+
+          const tasks = await res.json();
+          if (!Array.isArray(tasks)) return logout();
+
+          const list = document.getElementById("taskList");
+          list.innerHTML = "";
+
+          tasks.forEach((task) => {
+            const li = document.createElement("li");
+            li.innerHTML = `
+            <span class="user-info">${task.taskName || "undefined"} (User: ${
+              task.userId?.username || "Unknown"
+            })</span>
+          `;
+
+            const delBtn = document.createElement("button");
+            delBtn.className = "btn btn-delete";
+            delBtn.textContent = "Delete";
+            delBtn.onclick = async () => {
+              await fetch(`/api/admin/tasks/${task._id}`, {
+                method: "DELETE",
+                headers: { Authorization: "Bearer " + token },
+              });
+              fetchTasks();
+            };
+
+            li.appendChild(delBtn);
+            list.appendChild(li);
+          });
+        } catch (err) {
+          console.error("Task fetch error:", err);
+        }
+      }
+
+      fetchUsers();
+      fetchTasks();
+    </script>
+  </body>
 </html>
