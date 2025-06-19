@@ -1,23 +1,31 @@
-const mongoose = require("mongoose");
 require("dotenv").config();
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 const User = require("./models/User");
 
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(async () => {
-    const adminExists = await User.findOne({ username: "admin" });
-    if (adminExists) {
-      console.log("Admin user already exists");
-      return mongoose.disconnect();
-    }
+const resetAdmin = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
 
-    const newUser = await User.create({
-      username: "admin",
-      password: "adminpass", // use bcrypt if your login hashes passwords
+    const username = "admin";
+    const password = "yourNewPassword123"; // 🔐 Set your new password here
+
+    await User.deleteOne({ username }); // Delete old admin user
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const admin = new User({
+      username,
+      password: hashedPassword,
       isAdmin: true,
     });
 
-    console.log("✅ Admin user created:", newUser);
-    mongoose.disconnect();
-  })
-  .catch((err) => console.error("DB error:", err));
+    await admin.save();
+    console.log(`✅ Admin user reset: ${username} / ${password}`);
+    process.exit();
+  } catch (err) {
+    console.error("❌ Error:", err);
+    process.exit(1);
+  }
+};
+
+resetAdmin();

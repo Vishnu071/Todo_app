@@ -11,16 +11,10 @@ const login = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // If you're hashing passwords, use bcrypt.compare here
-    // const isMatch = await bcrypt.compare(password, user.password);
-    // if (!isMatch) return res.status(401).json({ message: "Invalid password" });
-
-    // Plain text password check
     if (user.password !== password) {
       return res.status(401).json({ message: "Invalid password" });
     }
 
-    // ✅ Generate JWT
     const token = jwt.sign(
       { userId: user._id, isAdmin: user.isAdmin },
       process.env.JWT_SECRET,
@@ -29,11 +23,7 @@ const login = async (req, res) => {
 
     res.status(200).json({
       token,
-      user: {
-        id: user._id,
-        username: user.username,
-        isAdmin: user.isAdmin,
-      },
+      isAdmin: user.isAdmin,
     });
   } catch (err) {
     console.error("Login error:", err);
