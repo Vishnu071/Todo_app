@@ -56,3 +56,13 @@ Desktop.ini
 *.css text eol=lf
 *.html text eol=lf
 *.env text eol=lf
+
+# Global ignore rules
+.env
+node_modules/
+
+# Specifically ignore backend/frontend environment and dependencies
+todo_backend/.env
+todo_backend/node_modules/
+todo_frontend/node_modules/
+
