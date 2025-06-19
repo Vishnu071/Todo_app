@@ -36,6 +36,7 @@
         border-radius: 4px;
         cursor: pointer;
         float: right;
+        margin-bottom: 20px;
       }
 
       ul {
@@ -100,9 +101,17 @@
       input[type="text"] {
         width: 100%;
         padding: 8px;
-        margin: 10px 0 20px;
+        margin: 10px 0;
         border: 1px solid #ccc;
         border-radius: 6px;
+      }
+
+      select {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 20px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
       }
     </style>
   </head>
@@ -114,12 +123,8 @@
       <h2>Users</h2>
       <ul id="userList"></ul>
 
-      <h2>All Tasks</h2>
-      <input
-        type="text"
-        placeholder="Search tasks..."
-        onkeyup="filterTasks(this.value)"
-      />
+      <h2 style="margin-top: 40px;">All Tasks</h2>
+      <input type="text" placeholder="Search tasks..." onkeyup="filterTasks(this.value)" />
       <select onchange="sortTasks(this.value)">
         <option value="">Sort by</option>
         <option value="username">Username (A-Z)</option>
@@ -154,17 +159,9 @@
           li.innerHTML = `
             ${user.username} ${user.isAdmin ? "(Admin)" : ""}
             <span>
-              <button class="btn btn-delete" onclick="deleteUser('${
-                user._id
-              }')">Delete</button>
-              <button class="btn btn-edit" onclick="editUser('${user._id}', '${
-            user.username
-          }')">Edit</button>
-              ${
-                !user.isAdmin
-                  ? `<button class='btn btn-promote' onclick="promote('${user._id}')">Promote to Admin</button>`
-                  : ""
-              }
+              <button class="btn btn-delete" onclick="deleteUser('${user._id}')">Delete</button>
+              <button class="btn btn-edit" onclick="editUser('${user._id}', '${user.username}')">Edit</button>
+              ${!user.isAdmin ? `<button class='btn btn-promote' onclick="promote('${user._id}')">Promote to Admin</button>` : ""}
             </span>
           `;
           list.appendChild(li);
@@ -224,13 +221,9 @@
           li.innerHTML = `
             <span class="user-info">
               ${task.title} (User: ${task.userId?.username || "Unknown"})
-              <span class="status ${task.status?.replace(/\s/g, "")}">${
-            task.status
-          }</span>
+              <span class="status ${task.status?.replace(/\s/g, "")}">${task.status}</span>
             </span>
-            <button class="btn btn-delete" onclick="deleteTask('${
-              task._id
-            }')">Delete</button>
+            <button class="btn btn-delete" onclick="deleteTask('${task._id}')">Delete</button>
           `;
           list.appendChild(li);
         });
@@ -255,9 +248,7 @@
       function sortTasks(key) {
         const sorted = [...allTasks].sort((a, b) => {
           if (key === "username") {
-            return (a.userId?.username || "").localeCompare(
-              b.userId?.username || ""
-            );
+            return (a.userId?.username || "").localeCompare(b.userId?.username || "");
           }
           return (a[key] || "").localeCompare(b[key] || "");
         });
