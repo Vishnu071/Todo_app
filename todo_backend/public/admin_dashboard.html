@@ -18,6 +18,9 @@
   </style>
 </head>
 <body>
+  <h1>Admin Dashboard</h1>
+  <button onclick="logout()">Logout</button>
+
   <h2>Users</h2>
   <ul id="userList"></ul>
 
@@ -27,91 +30,124 @@
   <script>
     const token = localStorage.getItem("adminToken");
 
+    // 🔐 Block unauthorized access
+    if (!token) {
+      alert("You must be logged in as an admin.");
+      window.location.href = "/admin.html";
+    }
+
+    function logout() {
+      localStorage.removeItem("adminToken");
+      window.location.href = "/admin.html";
+    }
+
     async function fetchUsers() {
-      const res = await fetch("/api/admin/users", {
-        headers: { Authorization: "Bearer " + token }
-      });
-      const users = await res.json();
-      const list = document.getElementById("userList");
-      list.innerHTML = "";
+      try {
+        const res = await fetch("/api/admin/users", {
+          headers: { Authorization: "Bearer " + token }
+        });
 
-      users.forEach(user => {
-        const li = document.createElement("li");
-        li.textContent = user.username + (user.isAdmin ? " (Admin)" : "");
+        const users = await res.json();
+        const list = document.getElementById("userList");
+        list.innerHTML = "";
 
-        const delBtn = document.createElement("button");
-        delBtn.textContent = "Delete";
-        delBtn.onclick = async () => {
-          await fetch(`/api/admin/users/${user._id}`, {
-            method: "DELETE",
-            headers: { Authorization: "Bearer " + token }
-          });
-          fetchUsers();
-        };
+        if (!Array.isArray(users)) {
+          console.error("Invalid users data:", users);
+          return;
+        }
 
-        if (!user.isAdmin) {
-          const promoteBtn = document.createElement("button");
-          promoteBtn.textContent = "Promote to Admin";
-          promoteBtn.onclick = async () => {
-            await fetch(`/api/admin/users/promote/${user._id}`, {
-              method: "PUT",
+        users.forEach(user => {
+          const li = document.createElement("li");
+          li.textContent = user.username + (user.isAdmin ? " (Admin)" : "");
+
+          const delBtn = document.createElement("button");
+          delBtn.textContent = "Delete";
+          delBtn.onclick = async () => {
+            await fetch(`/api/admin/users/${user._id}`, {
+              method: "DELETE",
               headers: { Authorization: "Bearer " + token }
             });
             fetchUsers();
           };
-          li.appendChild(promoteBtn);
-        }
 
-        const editBtn = document.createElement("button");
-        editBtn.textContent = "Edit";
-        editBtn.onclick = () => {
-          const newUsername = prompt("New username:", user.username);
-          const newPassword = prompt("New password:");
-          if (newUsername && newPassword) {
-            fetch(`/api/admin/users/${user._id}`, {
-              method: "PUT",
-              headers: {
-                Authorization: "Bearer " + token,
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify({ username: newUsername, password: newPassword })
-            }).then(fetchUsers);
+          const editBtn = document.createElement("button");
+          editBtn.textContent = "Edit";
+          editBtn.onclick = () => {
+            const newUsername = prompt("New username:", user.username);
+            const newPassword = prompt("New password:");
+            if (newUsername && newPassword) {
+              fetch(`/api/admin/users/${user._id}`, {
+                method: "PUT",
+                headers: {
+                  Authorization: "Bearer " + token,
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ username: newUsername, password: newPassword })
+              }).then(fetchUsers);
+            }
+          };
+
+          li.appendChild(delBtn);
+          li.appendChild(editBtn);
+
+          if (!user.isAdmin) {
+            const promoteBtn = document.createElement("button");
+            promoteBtn.textContent = "Promote to Admin";
+            promoteBtn.onclick = async () => {
+              await fetch(`/api/admin/users/promote/${user._id}`, {
+                method: "PUT",
+                headers: { Authorization: "Bearer " + token }
+              });
+              fetchUsers();
+            };
+            li.appendChild(promoteBtn);
           }
-        };
 
-        li.appendChild(delBtn);
-        li.appendChild(editBtn);
-        list.appendChild(li);
-      });
+          list.appendChild(li);
+        });
+      } catch (err) {
+        console.error("Error fetching users:", err);
+      }
     }
 
     async function fetchTasks() {
-      const res = await fetch("/api/admin/tasks", {
-        headers: { Authorization: "Bearer " + token }
-      });
-      const tasks = await res.json();
-      const list = document.getElementById("taskList");
-      list.innerHTML = "";
+      try {
+        const res = await fetch("/api/admin/tasks", {
+          headers: { Authorization: "Bearer " + token }
+        });
 
-      tasks.forEach(task => {
-        const li = document.createElement("li");
-        li.textContent = `${task.taskName} (User: ${task.userId?.username || "Unknown"})`;
+        const tasks = await res.json();
+        const list = document.getElementById("taskList");
+        list.innerHTML = "";
 
-        const delBtn = document.createElement("button");
-        delBtn.textContent = "Delete";
-        delBtn.onclick = async () => {
-          await fetch(`/api/admin/tasks/${task._id}`, {
-            method: "DELETE",
-            headers: { Authorization: "Bearer " + token }
-          });
-          fetchTasks();
-        };
+        if (!Array.isArray(tasks)) {
+          console.error("Invalid tasks data:", tasks);
+          return;
+        }
 
-        li.appendChild(delBtn);
-        list.appendChild(li);
-      });
+        tasks.forEach(task => {
+          const li = document.createElement("li");
+          li.textContent = `${task.taskName} (User: ${task.userId?.username || "Unknown"})`;
+
+          const delBtn = document.createElement("button");
+          delBtn.textContent = "Delete";
+          delBtn.onclick = async () => {
+            await fetch(`/api/admin/tasks/${task._id}`, {
+              method: "DELETE",
+              headers: { Authorization: "Bearer " + token }
+            });
+            fetchTasks();
+          };
+
+          li.appendChild(delBtn);
+          list.appendChild(li);
+        });
+      } catch (err) {
+        console.error("Error fetching tasks:", err);
+      }
     }
 
+    // 🚀 Init
     fetchUsers();
     fetchTasks();
   </script>
