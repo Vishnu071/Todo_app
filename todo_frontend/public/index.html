@@ -1,100 +1,260 @@
-<!-- ✅ index.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard - To-Do App</title>
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="styles.css" />
+    <title>Admin Dashboard</title>
     <style>
-      .navbar {
-        background: #ffffffdd;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        padding: 10px 30px;
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background-color: #f1f3f6;
+        margin: 0;
+        padding: 40px 0;
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-radius: 0 0 20px 20px;
-        position: sticky;
-        top: 0;
-        z-index: 10;
+        justify-content: center;
       }
-      .navbar-logo {
-        font-size: 24px;
-        font-weight: bold;
-        color: #2d5fff;
+
+      .container {
+        width: 90%;
+        max-width: 900px;
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
       }
-      .logout-btn {
-        background-color: #ef4444;
+
+      h1,
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+      }
+
+      button.logout {
+        background-color: #c0392b;
         color: white;
         border: none;
         padding: 8px 16px;
-        border-radius: 8px;
+        border-radius: 4px;
         cursor: pointer;
-        font-weight: bold;
+        float: right;
       }
-      .logout-btn:hover {
-        background-color: #dc2626;
+
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      li {
+        background: #fafafa;
+        padding: 10px 15px;
+        margin: 10px 0;
+        border-radius: 6px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: 1px solid #ddd;
+      }
+
+      .btn {
+        padding: 5px 10px;
+        margin-left: 5px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+
+      .btn-delete {
+        background-color: #e74c3c;
+        color: white;
+      }
+      .btn-edit {
+        background-color: #f39c12;
+        color: white;
+      }
+      .btn-promote {
+        background-color: #27ae60;
+        color: white;
+      }
+
+      .status {
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+        margin-left: 10px;
+      }
+
+      .Pending {
+        background-color: #f1c40f;
+        color: white;
+      }
+      .Completed {
+        background-color: #2ecc71;
+        color: white;
+      }
+      .In\ Progress {
+        background-color: #3498db;
+        color: white;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        margin: 10px 0 20px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
       }
     </style>
   </head>
   <body>
-    <nav class="navbar">
-      <div class="navbar-logo">To-Do App</div>
-      <button class="logout-btn" onclick="logout()">Logout</button>
-    </nav>
+    <div class="container">
+      <button class="logout" onclick="logout()">Logout</button>
+      <h1>Admin Dashboard</h1>
 
-    <main class="container">
-      <form
-        id="taskForm"
-        class="controls"
-        onsubmit="event.preventDefault(); addTask();"
-      >
-        <input type="text" id="title" placeholder="Task Title" required />
-        <input type="text" id="description" placeholder="Description" />
-        <input type="date" id="deadline" />
-        <select id="priority">
-          <option value="Low">Low Priority</option>
-          <option value="Medium">Medium Priority</option>
-          <option value="High">High Priority</option>
-        </select>
-        <button type="submit">
-          <span class="material-icons">add_task</span> Add Task
-        </button>
-        <button type="button" onclick="toggleDarkMode()">
-          <span class="material-icons">dark_mode</span> Toggle Dark Mode
-        </button>
-      </form>
+      <h2>Users</h2>
+      <ul id="userList"></ul>
 
-      <div id="taskList"></div>
-
-      <div class="progress-bar-container">
-        <div class="progress-bar" id="progressBar"></div>
-      </div>
-    </main>
-
-    <audio
-      id="sound"
-      src="https://www.soundjay.com/buttons/sounds/button-3.mp3"
-      preload="auto"
-    ></audio>
+      <h2>All Tasks</h2>
+      <input
+        type="text"
+        placeholder="Search tasks..."
+        onkeyup="filterTasks(this.value)"
+      />
+      <select onchange="sortTasks(this.value)">
+        <option value="">Sort by</option>
+        <option value="username">Username (A-Z)</option>
+        <option value="title">Task Title (A-Z)</option>
+        <option value="status">Status</option>
+      </select>
+      <ul id="taskList"></ul>
+    </div>
 
     <script>
-      if (!localStorage.getItem("token")) {
-        window.location.href = "login.html";
+      const token = localStorage.getItem("adminToken");
+      if (!token) {
+        alert("Please log in as admin.");
+        window.location.href = "/admin.html";
       }
+
       function logout() {
-        localStorage.removeItem("token");
-        window.location.href = "login.html";
+        localStorage.removeItem("adminToken");
+        window.location.href = "/admin.html";
       }
+
+      async function fetchUsers() {
+        const res = await fetch("/api/admin/users", {
+          headers: { Authorization: "Bearer " + token },
+        });
+        const users = await res.json();
+        const list = document.getElementById("userList");
+        list.innerHTML = "";
+
+        users.forEach((user) => {
+          const li = document.createElement("li");
+          li.innerHTML = `
+          ${user.username} ${user.isAdmin ? "(Admin)" : ""}
+          <span>
+            <button class="btn btn-delete" onclick="deleteUser('${
+              user._id
+            }')">Delete</button>
+            <button class="btn btn-edit" onclick="editUser('${user._id}', '${
+            user.username
+          }')">Edit</button>
+            ${
+              !user.isAdmin
+                ? `<button class='btn btn-promote' onclick="promote('${user._id}')">Promote to Admin</button>`
+                : ""
+            }
+          </span>
+        `;
+          list.appendChild(li);
+        });
+      }
+
+      async function deleteUser(id) {
+        await fetch(`/api/admin/users/${id}`, {
+          method: "DELETE",
+          headers: { Authorization: "Bearer " + token },
+        });
+        fetchUsers();
+      }
+
+      async function editUser(id, oldUsername) {
+        const newUsername = prompt("New username:", oldUsername);
+        const newPassword = prompt("New password:");
+        if (newUsername && newPassword) {
+          await fetch(`/api/admin/users/${id}`, {
+            method: "PUT",
+            headers: {
+              Authorization: "Bearer " + token,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              username: newUsername,
+              password: newPassword,
+            }),
+          });
+          fetchUsers();
+        }
+      }
+
+      async function promote(id) {
+        await fetch(`/api/admin/users/promote/${id}`, {
+          method: "PUT",
+          headers: { Authorization: "Bearer " + token },
+        });
+        fetchUsers();
+      }
+
+      let allTasks = [];
+
+      async function fetchTasks() {
+        const res = await fetch("/api/admin/tasks", {
+          headers: { Authorization: "Bearer " + token },
+        });
+        allTasks = await res.json();
+        renderTasks(allTasks);
+      }
+
+      function renderTasks(tasks) {
+        const list = document.getElementById("taskList");
+        list.innerHTML = "";
+        tasks.forEach((task) => {
+          const li = document.createElement("li");
+          li.innerHTML = `
+          <span class="user-info">
+            ${task.title} (User: ${task.userId?.username || "Unknown"})
+            <span class="status ${task.status.replace(/\s/g, "")}">${
+            task.status
+          }</span>
+          </span>
+          <button class="btn btn-delete" onclick="deleteTask('${
+            task._id
+          }')">Delete</button>
+        `;
+          list.appendChild(li);
+        });
+      }
+
+      function filterTasks(query) {
+        const filtered = allTasks.filter(
+          (task) =>
+            task.title.toLowerCase().includes(query.toLowerCase()) ||
+            task.userId?.username.toLowerCase().includes(query.toLowerCase())
+        );
+        renderTasks(filtered);
+      }
+
+      function sortTasks(key) {
+        const sorted = [...allTasks].sort((a, b) => {
+          if (!a[key] || !b[key]) return 0;
+          return a[key].toString().localeCompare(b[key].toString());
+        });
+        renderTasks(sorted);
+      }
+
+      fetchUsers();
+      fetchTasks();
     </script>
-    <script src="auth.js"></script>
-    <script src="api.js"></script>
-    <script src="script.js"></script>
   </body>
 </html>
