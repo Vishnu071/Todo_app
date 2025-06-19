@@ -1,7 +1,7 @@
 const Task = require("../models/Task");
 
-// GET /api/tasks?status=Pending&priority=High&page=1&limit=10&search=text
-exports.getTasks = async (req, res) => {
+// GET /api/tasks?status=...&priority=...
+const getTasks = async (req, res) => {
   try {
     const {
       status,
@@ -47,5 +47,53 @@ exports.getTasks = async (req, res) => {
   }
 };
 
-// Create, Update, Delete methods updated similarly with validation and role checks
-// For brevity, add validation middleware and proper error messages as needed
+// POST /api/tasks
+const createTask = async (req, res) => {
+  try {
+    const newTask = new Task({
+      ...req.body,
+      userId: req.userId,
+    });
+    const savedTask = await newTask.save();
+    res.status(201).json(savedTask);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// PUT /api/tasks/:id
+const updateTask = async (req, res) => {
+  try {
+    const task = await Task.findOneAndUpdate(
+      { _id: req.params.id, userId: req.userId },
+      req.body,
+      { new: true }
+    );
+    if (!task) return res.status(404).json({ message: "Task not found" });
+    res.json(task);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// DELETE /api/tasks/:id
+const deleteTask = async (req, res) => {
+  try {
+    const task = await Task.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.userId,
+    });
+    if (!task) return res.status(404).json({ message: "Task not found" });
+    res.json({ message: "Task deleted" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// ✅ Export all controller functions
+module.exports = {
+  getTasks,
+  createTask,
+  updateTask,
+  deleteTask,
+};
