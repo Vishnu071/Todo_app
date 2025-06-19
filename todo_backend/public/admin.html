@@ -1,33 +1,36 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Admin Login</title>
-</head>
-<body>
-  <h2>Admin Login</h2>
-  <input type="text" id="username" placeholder="Username" />
-  <input type="password" id="password" placeholder="Password" />
-  <button onclick="login()">Login</button>
+  <head>
+    <title>Admin Login</title>
+  </head>
+  <body>
+    <h2>Admin Login</h2>
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="login()">Login</button>
 
-  <script>
-    async function login() {
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
+    <script>
+      async function login() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
 
-      const res = await fetch("/api/users/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
-      });
+        const res = await fetch(
+          "https://todo-app-n9jg.onrender.com/api/users/login",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password }),
+          }
+        );
 
-      const data = await res.json();
-      if (data.token && data.user.isAdmin) {
-        localStorage.setItem("adminToken", data.token);
-        window.location.href = "/admin_dashboard.html";
-      } else {
-        alert("Login failed or not admin");
+        const data = await res.json();
+        if (data.token && data.user.isAdmin) {
+          localStorage.setItem("adminToken", data.token);
+          window.location.href = "/admin_dashboard.html";
+        } else {
+          alert("Login failed or not admin");
+        }
       }
-    }
-  </script>
-</body>
+    </script>
+  </body>
 </html>
