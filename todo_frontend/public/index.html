@@ -1,143 +1,98 @@
+<!-- ✅ index.html -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, minimum-scale=1"
-    />
-    <title>To-Do App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - To-Do App</title>
     <link
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
+    <style>
+      .navbar {
+        background: #ffffffdd;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 10px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 0 0 20px 20px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      .navbar-logo {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2d5fff;
+      }
+      .logout-btn {
+        background-color: #ef4444;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      .logout-btn:hover {
+        background-color: #dc2626;
+      }
+    </style>
   </head>
   <body>
-    <header role="banner" class="container">
-      <h1 tabindex="0">To-Do App</h1>
-    </header>
+    <nav class="navbar">
+      <div class="navbar-logo">To-Do App</div>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </nav>
 
-    <main role="main" class="container">
-      <section
-        aria-labelledby="auth-section-label"
-        class="auth-section"
-        tabindex="-1"
+    <main class="container">
+      <form
+        id="taskForm"
+        class="controls"
+        onsubmit="event.preventDefault(); addTask();"
       >
-        <h2 id="auth-section-label" class="visually-hidden">
-          User Authentication
-        </h2>
-        <input
-          type="email"
-          id="email"
-          aria-label="Email address"
-          placeholder="Email"
-          autocomplete="username"
-          required
-        />
-        <input
-          type="password"
-          id="password"
-          aria-label="Password"
-          placeholder="Password"
-          autocomplete="current-password"
-          required
-        />
-        <button type="button" onclick="register()">
-          <span class="material-icons" aria-hidden="true">person_add</span>
-          Register
+        <input type="text" id="title" placeholder="Task Title" required />
+        <input type="text" id="description" placeholder="Description" />
+        <input type="date" id="deadline" />
+        <select id="priority">
+          <option value="Low">Low Priority</option>
+          <option value="Medium">Medium Priority</option>
+          <option value="High">High Priority</option>
+        </select>
+        <button type="submit">
+          <span class="material-icons">add_task</span> Add Task
         </button>
-        <button type="button" onclick="login()">
-          <span class="material-icons" aria-hidden="true">login</span> Login
+        <button type="button" onclick="toggleDarkMode()">
+          <span class="material-icons">dark_mode</span> Toggle Dark Mode
         </button>
-      </section>
+      </form>
 
-      <section
-        aria-labelledby="tasks-section-label"
-        class="task-section hidden"
-        tabindex="-1"
-      >
-        <h2 id="tasks-section-label" class="visually-hidden">
-          Task Management
-        </h2>
-        <form
-          class="controls"
-          id="taskForm"
-          onsubmit="event.preventDefault(); addTask();"
-          aria-describedby="task-form-desc"
-        >
-          <p id="task-form-desc" class="visually-hidden">
-            Form to add new tasks with title, description, deadline, and
-            priority
-          </p>
-          <input
-            type="text"
-            id="title"
-            aria-label="Task Title"
-            placeholder="Task Title"
-            required
-            minlength="3"
-            maxlength="100"
-          />
-          <input
-            type="text"
-            id="description"
-            aria-label="Task Description"
-            placeholder="Description"
-            maxlength="300"
-          />
-          <input type="date" id="deadline" aria-label="Deadline" min="" />
-          <select id="priority" aria-label="Priority Level" required>
-            <option value="Low">Low Priority</option>
-            <option value="Medium">Medium Priority</option>
-            <option value="High">High Priority</option>
-          </select>
-          <button type="submit" aria-live="polite" aria-busy="false">
-            <span class="material-icons" aria-hidden="true">add_task</span> Add
-            Task
-          </button>
-          <button
-            type="button"
-            onclick="toggleDarkMode()"
-            aria-pressed="false"
-            aria-label="Toggle dark mode"
-            id="darkModeToggle"
-          >
-            <span class="material-icons" aria-hidden="true">dark_mode</span>
-            Toggle Dark Mode
-          </button>
-        </form>
-        <div
-          id="taskList"
-          tabindex="0"
-          aria-live="polite"
-          aria-atomic="true"
-          aria-relevant="additions removals"
-        ></div>
+      <div id="taskList"></div>
 
-        <div
-          class="progress-bar-container"
-          aria-label="Task completion progress"
-        >
-          <div
-            class="progress-bar"
-            id="progressBar"
-            role="progressbar"
-            aria-valuemin="0"
-            aria-valuemax="100"
-            aria-valuenow="0"
-          ></div>
-        </div>
-      </section>
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
     </main>
 
     <audio
       id="sound"
       src="https://www.soundjay.com/buttons/sounds/button-3.mp3"
       preload="auto"
-      aria-hidden="true"
     ></audio>
 
+    <script>
+      if (!localStorage.getItem("token")) {
+        window.location.href = "login.html";
+      }
+      function logout() {
+        localStorage.removeItem("token");
+        window.location.href = "login.html";
+      }
+    </script>
     <script src="auth.js"></script>
     <script src="api.js"></script>
     <script src="script.js"></script>

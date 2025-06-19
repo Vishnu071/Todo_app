@@ -9,20 +9,20 @@ const adminRoutes = require("./routes/admin");
 
 const app = express();
 
-// ✅ Serve admin.html and other static files from /public
+// Serve static files (frontend)
 app.use(express.static("public"));
 
-// ✅ Allow CORS from any origin or restrict in production
+// CORS policy
 app.use(
   cors({
-    origin: "*",
+    origin: "*", // Adjust for production
   })
 );
 
 app.use(express.json());
 
-// Routes
-app.use("/api/users", userRoutes);
+// API Routes
+app.use("/api/users", userRoutes); // Includes /logout
 app.use("/api/tasks", taskRoutes);
 app.use("/api/admin", adminRoutes);
 
