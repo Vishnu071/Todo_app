@@ -5,6 +5,7 @@ require("dotenv").config();
 
 const userRoutes = require("./routes/userRoutes");
 const taskRoutes = require("./routes/taskRoutes");
+const adminRoutes = require("./routes/admin"); // ✅ Import admin routes
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(express.json());
 // Routes
 app.use("/api/users", userRoutes);
 app.use("/api/tasks", taskRoutes);
+app.use("/api/admin", adminRoutes); // ✅ Mount admin routes here
 
 // Root route for health check
 app.get("/", (req, res) => {
