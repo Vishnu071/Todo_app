@@ -92,7 +92,7 @@
         background-color: #2ecc71;
         color: white;
       }
-      .In\ Progress {
+      .InProgress {
         background-color: #3498db;
         color: white;
       }
@@ -152,21 +152,21 @@
         users.forEach((user) => {
           const li = document.createElement("li");
           li.innerHTML = `
-          ${user.username} ${user.isAdmin ? "(Admin)" : ""}
-          <span>
-            <button class="btn btn-delete" onclick="deleteUser('${
-              user._id
-            }')">Delete</button>
-            <button class="btn btn-edit" onclick="editUser('${user._id}', '${
+            ${user.username} ${user.isAdmin ? "(Admin)" : ""}
+            <span>
+              <button class="btn btn-delete" onclick="deleteUser('${
+                user._id
+              }')">Delete</button>
+              <button class="btn btn-edit" onclick="editUser('${user._id}', '${
             user.username
           }')">Edit</button>
-            ${
-              !user.isAdmin
-                ? `<button class='btn btn-promote' onclick="promote('${user._id}')">Promote to Admin</button>`
-                : ""
-            }
-          </span>
-        `;
+              ${
+                !user.isAdmin
+                  ? `<button class='btn btn-promote' onclick="promote('${user._id}')">Promote to Admin</button>`
+                  : ""
+              }
+            </span>
+          `;
           list.appendChild(li);
         });
       }
@@ -222,24 +222,31 @@
         tasks.forEach((task) => {
           const li = document.createElement("li");
           li.innerHTML = `
-          <span class="user-info">
-            ${task.title} (User: ${task.userId?.username || "Unknown"})
-            <span class="status ${task.status.replace(/\s/g, "")}">${
+            <span class="user-info">
+              ${task.title} (User: ${task.userId?.username || "Unknown"})
+              <span class="status ${task.status?.replace(/\s/g, "")}">${
             task.status
           }</span>
-          </span>
-          <button class="btn btn-delete" onclick="deleteTask('${
-            task._id
-          }')">Delete</button>
-        `;
+            </span>
+            <button class="btn btn-delete" onclick="deleteTask('${
+              task._id
+            }')">Delete</button>
+          `;
           list.appendChild(li);
         });
+      }
+
+      function deleteTask(id) {
+        fetch(`/api/admin/tasks/${id}`, {
+          method: "DELETE",
+          headers: { Authorization: "Bearer " + token },
+        }).then(fetchTasks);
       }
 
       function filterTasks(query) {
         const filtered = allTasks.filter(
           (task) =>
-            task.title.toLowerCase().includes(query.toLowerCase()) ||
+            task.title?.toLowerCase().includes(query.toLowerCase()) ||
             task.userId?.username.toLowerCase().includes(query.toLowerCase())
         );
         renderTasks(filtered);
@@ -247,8 +254,12 @@
 
       function sortTasks(key) {
         const sorted = [...allTasks].sort((a, b) => {
-          if (!a[key] || !b[key]) return 0;
-          return a[key].toString().localeCompare(b[key].toString());
+          if (key === "username") {
+            return (a.userId?.username || "").localeCompare(
+              b.userId?.username || ""
+            );
+          }
+          return (a[key] || "").localeCompare(b[key] || "");
         });
         renderTasks(sorted);
       }
