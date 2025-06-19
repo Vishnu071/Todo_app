@@ -5,14 +5,17 @@ require("dotenv").config();
 
 const userRoutes = require("./routes/userRoutes");
 const taskRoutes = require("./routes/taskRoutes");
-const adminRoutes = require("./routes/admin"); // ✅ Import admin routes
+const adminRoutes = require("./routes/admin");
 
 const app = express();
 
-// ✅ Allow CORS from any origin or restrict to your frontend domain
+// ✅ Serve admin.html and other static files from /public
+app.use(express.static("public"));
+
+// ✅ Allow CORS from any origin or restrict in production
 app.use(
   cors({
-    origin: "*", // Change "*" to "https://your-frontend.onrender.com" for production
+    origin: "*",
   })
 );
 
@@ -21,9 +24,9 @@ app.use(express.json());
 // Routes
 app.use("/api/users", userRoutes);
 app.use("/api/tasks", taskRoutes);
-app.use("/api/admin", adminRoutes); // ✅ Mount admin routes here
+app.use("/api/admin", adminRoutes);
 
-// Root route for health check
+// Health check
 app.get("/", (req, res) => {
   res.send("Todo Backend is running");
 });
