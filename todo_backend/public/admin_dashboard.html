@@ -29,37 +29,39 @@
 
   <script>
     const token = localStorage.getItem("adminToken");
-
-    // 🔐 Block unauthorized access
+  
     if (!token) {
-      alert("You must be logged in as an admin.");
+      alert("Please log in as admin.");
       window.location.href = "/admin.html";
     }
-
+  
     function logout() {
       localStorage.removeItem("adminToken");
       window.location.href = "/admin.html";
     }
-
+  
     async function fetchUsers() {
       try {
         const res = await fetch("/api/admin/users", {
           headers: { Authorization: "Bearer " + token }
         });
-
+  
         const users = await res.json();
-        const list = document.getElementById("userList");
-        list.innerHTML = "";
-
+  
         if (!Array.isArray(users)) {
-          console.error("Invalid users data:", users);
+          console.error("Expected users array, got:", users);
+          alert("⚠️ Unauthorized or session expired. Please log in again.");
+          logout();
           return;
         }
-
+  
+        const list = document.getElementById("userList");
+        list.innerHTML = "";
+  
         users.forEach(user => {
           const li = document.createElement("li");
           li.textContent = user.username + (user.isAdmin ? " (Admin)" : "");
-
+  
           const delBtn = document.createElement("button");
           delBtn.textContent = "Delete";
           delBtn.onclick = async () => {
@@ -69,7 +71,20 @@
             });
             fetchUsers();
           };
-
+  
+          if (!user.isAdmin) {
+            const promoteBtn = document.createElement("button");
+            promoteBtn.textContent = "Promote to Admin";
+            promoteBtn.onclick = async () => {
+              await fetch(`/api/admin/users/promote/${user._id}`, {
+                method: "PUT",
+                headers: { Authorization: "Bearer " + token }
+              });
+              fetchUsers();
+            };
+            li.appendChild(promoteBtn);
+          }
+  
           const editBtn = document.createElement("button");
           editBtn.textContent = "Edit";
           editBtn.onclick = () => {
@@ -86,49 +101,38 @@
               }).then(fetchUsers);
             }
           };
-
+  
           li.appendChild(delBtn);
           li.appendChild(editBtn);
-
-          if (!user.isAdmin) {
-            const promoteBtn = document.createElement("button");
-            promoteBtn.textContent = "Promote to Admin";
-            promoteBtn.onclick = async () => {
-              await fetch(`/api/admin/users/promote/${user._id}`, {
-                method: "PUT",
-                headers: { Authorization: "Bearer " + token }
-              });
-              fetchUsers();
-            };
-            li.appendChild(promoteBtn);
-          }
-
           list.appendChild(li);
         });
       } catch (err) {
-        console.error("Error fetching users:", err);
+        console.error("User fetch error:", err);
       }
     }
-
+  
     async function fetchTasks() {
       try {
         const res = await fetch("/api/admin/tasks", {
           headers: { Authorization: "Bearer " + token }
         });
-
+  
         const tasks = await res.json();
-        const list = document.getElementById("taskList");
-        list.innerHTML = "";
-
+  
         if (!Array.isArray(tasks)) {
-          console.error("Invalid tasks data:", tasks);
+          console.error("Expected tasks array, got:", tasks);
+          alert("⚠️ Unauthorized or session expired. Please log in again.");
+          logout();
           return;
         }
-
+  
+        const list = document.getElementById("taskList");
+        list.innerHTML = "";
+  
         tasks.forEach(task => {
           const li = document.createElement("li");
           li.textContent = `${task.taskName} (User: ${task.userId?.username || "Unknown"})`;
-
+  
           const delBtn = document.createElement("button");
           delBtn.textContent = "Delete";
           delBtn.onclick = async () => {
@@ -138,18 +142,19 @@
             });
             fetchTasks();
           };
-
+  
           li.appendChild(delBtn);
           list.appendChild(li);
         });
       } catch (err) {
-        console.error("Error fetching tasks:", err);
+        console.error("Task fetch error:", err);
       }
     }
-
-    // 🚀 Init
+  
     fetchUsers();
     fetchTasks();
+  </script>
+  
   </script>
 </body>
 </html>
