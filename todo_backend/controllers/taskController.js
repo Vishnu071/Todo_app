@@ -1,4 +1,4 @@
-const Task = require("../models/Task");
+const Task = require("../models/task");
 
 // GET /api/tasks?status=...&priority=...
 const getTasks = async (req, res) => {

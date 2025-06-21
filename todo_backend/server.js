@@ -43,7 +43,7 @@ mongoose
 
     // === Scheduled Email Notifications ===
     const cron = require("node-cron");
-    const Todo = require("./models/Todo");
+    const Todo = require("./models/task");
     const User = require("./models/User");
     const { sendTaskReminder } = require("./utils/mailer");
 
