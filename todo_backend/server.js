@@ -40,6 +40,47 @@ mongoose
     app.listen(PORT, () => {
       console.log(`🚀 Server is running on port ${PORT}`);
     });
+
+    // === Scheduled Email Notifications ===
+    const cron = require("node-cron");
+    const Todo = require("./models/Todo");
+    const User = require("./models/User");
+    const { sendTaskReminder } = require("./utils/mailer");
+
+    // Every 10 minutes, check for tasks due in the next hour
+    cron.schedule("*/10 * * * *", async () => {
+      const now = new Date();
+      const soon = new Date(now.getTime() + 60 * 60 * 1000);
+
+      // Find todos due soon and not completed
+      const todos = await Todo.find({
+        dueDate: { $gte: now, $lte: soon },
+        completed: false,
+      }).populate("user");
+
+      for (const todo of todos) {
+        const user = todo.user;
+        if (!user || !user.email) continue;
+
+        // Customize subject by priority
+        let subject = `[${todo.priority}] Task Reminder: ${todo.title}`;
+        if (todo.priority === "High")
+          subject = `🚨 HIGH PRIORITY: ${todo.title} is due soon!`;
+        if (todo.priority === "Medium")
+          subject = `⏰ Reminder: ${todo.title} (Medium Priority)`;
+        if (todo.priority === "Low")
+          subject = `Reminder: ${todo.title} (Low Priority)`;
+
+        let text = `Hi ${user.username || user.email},\n\nYour task "${
+          todo.title
+        }" (Priority: ${todo.priority}) is due at ${
+          todo.dueDate
+        }.\n\nDescription: ${todo.description}\n\n- Todo App`;
+
+        await sendTaskReminder(user.email, subject, text);
+      }
+    });
+    // === End Scheduled Email Notifications ===
   })
   .catch((error) => {
     console.error("❌ MongoDB connection error:", error);
