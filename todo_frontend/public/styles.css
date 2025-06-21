@@ -479,3 +479,130 @@ select:focus-visible {
 .hidden {
   display: none !important;
 }
+
+/* Colorful & Attractive Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(90deg, #ff512f 0%, #dd2476 50%, #1fa2ff 100%);
+  /* Glass effect */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background-blend-mode: overlay;
+  padding: 1.2rem 2.5rem;
+  border-radius: 18px;
+  margin-bottom: 2.5rem;
+  color: #fff;
+  font-weight: bold;
+  box-shadow: 0 8px 32px rgba(31, 162, 255, 0.18);
+  font-size: 1.25rem;
+  transition: background 0.3s;
+  border: 1.5px solid rgba(255,255,255,0.18);
+}
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.7rem;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 8px rgba(31,162,255,0.18);
+}
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+.user-email {
+  background: rgba(255,255,255,0.22);
+  padding: 7px 18px;
+  border-radius: 18px;
+  font-size: 1.05rem;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(255,255,255,0.08);
+}
+.logout-btn {
+  background: linear-gradient(90deg, #ff512f 0%, #dd2476 100%);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.05rem;
+  box-shadow: 0 2px 12px rgba(221,36,118,0.15);
+  border: 1.5px solid rgba(255,255,255,0.18);
+}
+.logout-btn:hover {
+  background: linear-gradient(90deg, #1fa2ff 0%, #12d8fa 100%);
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(31,162,255,0.25);
+}
+
+
+
+body {
+  /* ...existing code... */
+  background: linear-gradient(135deg, #c2e9fb 0%, #a1c4fd 50%, #fbc2eb 100%);
+  /* ...existing code... */
+}
+body.dark-mode {
+  background: linear-gradient(135deg, #232526 0%, #414345 100%);
+  color: var(--color-text-dark);
+}
+
+
+.auth-section,
+.controls,
+.task {
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(31, 162, 255, 0.10);
+  border: 1.5px solid rgba(255,255,255,0.18);
+}
+body.dark-mode .auth-section,
+body.dark-mode .controls,
+body.dark-mode .task {
+  background: rgba(44,44,44,0.7);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  border: 1.5px solid rgba(255,255,255,0.08);
+}
+
+
+.controls button,
+.auth-section button {
+  background: linear-gradient(90deg, #36d1c4 0%, #5b86e5 100%);
+  color: #fff;
+  box-shadow: 0 4px 24px rgba(91,134,229,0.18);
+  border: none;
+}
+.controls button:hover,
+.auth-section button:hover {
+  background: linear-gradient(90deg, #5b86e5 0%, #36d1c4 100%);
+  box-shadow: 0 8px 32px rgba(54,209,196,0.22);
+}
+
+.progress-bar {
+  background: linear-gradient(90deg, #ff512f 0%, #dd2476 50%, #1fa2ff 100%);
+  box-shadow: 0 2px 8px rgba(31,162,255,0.12);
+}
+
+.badge.priority-high {
+  background: linear-gradient(90deg, #ff512f 0%, #dd2476 100%);
+  color: #fff;
+}
+.badge.priority-medium {
+  background: linear-gradient(90deg, #f9d423 0%, #ff4e50 100%);
+  color: #fff;
+}
+.badge.priority-low {
+  background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+  color: #fff;
+}

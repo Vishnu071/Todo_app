@@ -17,6 +17,27 @@ function register() {
     .catch((err) => console.error(err));
 }
 
+// Show navbar and user email after login
+function showNavbar(email) {
+  document.querySelector(".navbar").classList.remove("hidden");
+  document.getElementById("userEmail").textContent = email;
+}
+
+// Hide navbar on logout
+function hideNavbar() {
+  document.querySelector(".navbar").classList.add("hidden");
+  document.getElementById("userEmail").textContent = "";
+}
+
+// Logout function
+document.getElementById("logoutBtn").onclick = function () {
+  token = "";
+  hideNavbar();
+  document.querySelector(".auth-section").classList.remove("hidden");
+  document.querySelector(".task-section").classList.add("hidden");
+};
+
+// Login function with navbar logic
 function login() {
   fetch("https://todo-app-full-6.onrender.com/api/users/login", {
     method: "POST",
@@ -32,10 +53,10 @@ function login() {
         token = data.token;
         document.querySelector(".auth-section").classList.add("hidden");
         document.querySelector(".task-section").classList.remove("hidden");
+        showNavbar(document.getElementById("email").value);
         getTasks();
       } else {
         alert(data.message);
       }
     });
 }
-
