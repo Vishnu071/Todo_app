@@ -12,6 +12,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
   </head>
   <body>
     <header role="banner" class="container">
@@ -106,9 +107,11 @@
             <option value="Medium">🟡 Medium Priority</option>
             <option value="High">🔴 High Priority</option>
           </select>
-          <button type="submit" aria-live="polite" aria-busy="false">
-            <span class="material-icons" aria-hidden="true">add_task</span> Add
-            Task
+          <button type="submit" id="addTaskBtn" aria-live="polite" aria-busy="false">
+            <span class="material-icons" aria-hidden="true">add_task</span> Add Task
+          </button>
+          <button type="button" id="saveTaskBtn" class="hidden" onclick="saveTask()" aria-live="polite" aria-busy="false">
+            <span class="material-icons" aria-hidden="true">save</span> Save
           </button>
           <button
             type="button"
@@ -151,7 +154,6 @@
       preload="auto"
       aria-hidden="true"
     ></audio>
-
     <script src="auth.js"></script>
     <script src="api.js"></script>
     <script src="script.js"></script>

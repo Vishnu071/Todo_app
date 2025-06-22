@@ -1,4 +1,3 @@
-
 function renderTasks(tasks) {
   const list = document.getElementById("taskList");
   list.innerHTML = "";
@@ -7,44 +6,34 @@ function renderTasks(tasks) {
   tasks.forEach((task) => {
     const div = document.createElement("div");
     div.className = "task";
-    div.style = "border: 1px solid #ccc; padding: 16px; border-radius: 10px; margin-bottom: 12px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.1);";
+    if (task.status === "Completed") div.classList.add("completed");
+
     div.innerHTML = `
       <h3>${task.title}</h3>
       <p>${task.description}</p>
       <p>Priority: ${task.priority}</p>
       <p>Deadline: ${task.deadline ? task.deadline.split("T")[0] : "N/A"}</p>
       <p>Status: ${task.status}</p>
-      <div style="margin-top: 12px;">
+      <div style="margin-top: 12px; display: flex; gap: 10px;">
         <button 
+          class="complete-btn"
           onclick="updateTask('${task._id}', 'Completed')" 
-          ${task.status === "Completed" ? "disabled" : ""} 
-          style="
-            background-color: ${task.status === 'Completed' ? '#ccc' : '#22c55e'};
-            color: white;
-            padding: 10px 16px;
-            border: none;
-            border-radius: 8px;
-            margin-right: 10px;
-            font-size: 14px;
-            cursor: ${task.status === 'Completed' ? 'not-allowed' : 'pointer'};
-            transition: background-color 0.3s ease;">
+          ${task.status === "Completed" ? "disabled" : ""}>
           ✔ Complete
         </button>
         <button 
-          onclick="confirmDelete('${task._id}')" 
-          style="
-            background-color: #ef4444;
-            color: white;
-            padding: 10px 16px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;">
+          class="edit-btn"
+          onclick='startEditTask(${JSON.stringify(task)})'>
+          ✏️ Edit
+        </button>
+        <button 
+          class="delete-btn"
+          onclick="confirmDelete('${task._id}')">
           🗑 Delete
         </button>
       </div>
     `;
+
     if (task.status === "Completed") completed++;
     list.appendChild(div);
   });
@@ -70,4 +59,42 @@ function toggleDarkMode() {
   } else {
     localStorage.setItem("theme", "light");
   }
+}
+
+let editingTaskId = null;
+
+function startEditTask(task) {
+  document.getElementById("title").value = task.title;
+  document.getElementById("description").value = task.description;
+  document.getElementById("deadline").value = task.deadline
+    ? task.deadline.split("T")[0]
+    : "";
+  document.getElementById("priority").value = task.priority;
+  editingTaskId = task._id;
+
+  document.getElementById("addTaskBtn").classList.add("hidden");
+  document.getElementById("saveTaskBtn").classList.remove("hidden");
+}
+
+function saveTask() {
+  const updatedTask = {
+    title: document.getElementById("title").value,
+    description: document.getElementById("description").value,
+    deadline: document.getElementById("deadline").value,
+    priority: document.getElementById("priority").value,
+  };
+  fetch("https://todo-app-full-6.onrender.com/api/tasks/" + editingTaskId, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token,
+    },
+    body: JSON.stringify(updatedTask),
+  }).then(() => {
+    editingTaskId = null;
+    document.getElementById("taskForm").reset();
+    document.getElementById("addTaskBtn").classList.remove("hidden");
+    document.getElementById("saveTaskBtn").classList.add("hidden");
+    getTasks();
+  });
 }
