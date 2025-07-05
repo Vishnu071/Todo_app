@@ -13,16 +13,32 @@ const app = express();
 app.use(express.static("public"));
 
 // CORS policy
+const allowedOrigins = [
+  "http://127.0.0.1:5500",
+  "http://localhost:5500",
+  "https://todo-app-full-6.onrender.com",
+];
+
 app.use(
   cors({
-    origin: "*", // Adjust for production
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like Postman, mobile apps)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg = `The CORS policy for this site does not allow access from the specified origin: ${origin}`;
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true,
   })
 );
 
 app.use(express.json());
 
 // API Routes
-app.use("/api/users", userRoutes); // Includes /logout
+app.use("/api/users", userRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/admin", adminRoutes);
 
@@ -47,12 +63,10 @@ mongoose
     const User = require("./models/User");
     const { sendTaskReminder } = require("./utils/mailer");
 
-    // Every 10 minutes, check for tasks due in the next hour
     cron.schedule("*/10 * * * *", async () => {
       const now = new Date();
       const soon = new Date(now.getTime() + 60 * 60 * 1000);
 
-      // Find todos due soon and not completed
       const todos = await Todo.find({
         dueDate: { $gte: now, $lte: soon },
         completed: false,
@@ -62,7 +76,6 @@ mongoose
         const user = todo.user;
         if (!user || !user.email) continue;
 
-        // Customize subject by priority
         let subject = `[${todo.priority}] Task Reminder: ${todo.title}`;
         if (todo.priority === "High")
           subject = `🚨 HIGH PRIORITY: ${todo.title} is due soon!`;
