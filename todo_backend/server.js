@@ -9,24 +9,20 @@ const adminRoutes = require("./routes/admin");
 
 const app = express();
 
-// === CORS Configuration ===
-const corsOptions = {
-  origin: ["http://127.0.0.1:5501", "https://todo-app-full-6.onrender.com"],
-  methods: "GET,POST,PUT,DELETE",
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions)); // handle preflight requests
-
 // Serve static files (frontend)
 app.use(express.static("public"));
 
-// Parse incoming JSON requests
+// CORS policy
+app.use(
+  cors({
+    origin: "*", // Adjust for production
+  })
+);
+
 app.use(express.json());
 
 // API Routes
-app.use("/api/users", userRoutes);
+app.use("/api/users", userRoutes); // Includes /logout
 app.use("/api/tasks", taskRoutes);
 app.use("/api/admin", adminRoutes);
 

@@ -1,22 +1,13 @@
 let token = "";
 
-// Register function
 function register() {
-  const emailInput = document.getElementById("registerEmail");
-  const passwordInput = document.getElementById("registerPassword");
-
-  if (!emailInput || !passwordInput) {
-    alert("Registration form is not loaded correctly.");
-    return;
-  }
-
   fetch("https://todo-app-full-6.onrender.com/api/users/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      email: emailInput.value,
-      password: passwordInput.value,
-      username: emailInput.value.split("@")[0],
+      email: document.getElementById("email").value,
+      password: document.getElementById("password").value,
+      username: document.getElementById("email").value.split("@")[0],
     }),
   })
     .then((res) => res.json())
@@ -48,20 +39,12 @@ document.getElementById("logoutBtn").onclick = function () {
 
 // Login function with navbar logic
 function login() {
-  const emailInput = document.getElementById("loginEmail");
-  const passwordInput = document.getElementById("loginPassword");
-
-  if (!emailInput || !passwordInput) {
-    alert("Login form is not loaded correctly.");
-    return;
-  }
-
   fetch("https://todo-app-full-6.onrender.com/api/users/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      email: emailInput.value,
-      password: passwordInput.value,
+      email: document.getElementById("email").value,
+      password: document.getElementById("password").value,
     }),
   })
     .then((res) => res.json())
@@ -70,7 +53,7 @@ function login() {
         token = data.token;
         document.querySelector(".auth-section").classList.add("hidden");
         document.querySelector(".task-section").classList.remove("hidden");
-        showNavbar(emailInput.value);
+        showNavbar(document.getElementById("email").value);
         getTasks();
       } else {
         alert(data.message);
