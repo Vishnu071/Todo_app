@@ -7,10 +7,7 @@
       content="width=device-width, initial-scale=1, minimum-scale=1"
     />
     <title>To-Do App</title>
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
     <link rel="stylesheet" href="styles.css" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
   </head>
@@ -19,53 +16,88 @@
       <h1 tabindex="0">To-Do App</h1>
     </header>
 
-    <!-- Advanced Colorful Navbar -->
     <nav class="navbar hidden">
       <span class="navbar-brand">
-        <span class="material-icons" aria-hidden="true">dashboard</span>
+        <i class="fa-solid fa-table-columns"></i>
         Dashboard
       </span>
       <div class="navbar-actions">
         <span id="userEmail" class="user-email"></span>
         <button id="logoutBtn" class="logout-btn">
-          <span class="material-icons" aria-hidden="true">logout</span> Logout
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
         </button>
       </div>
     </nav>
 
     <main role="main" class="container">
-      <section
-        aria-labelledby="auth-section-label"
-        class="auth-section"
-        tabindex="-1"
-      >
-        <h2 id="auth-section-label" class="visually-hidden">
-          User Authentication
-        </h2>
-        <input
-          type="email"
-          id="email"
-          aria-label="Email address"
-          placeholder="Email"
-          autocomplete="username"
-          required
-        />
-        <input
-          type="password"
-          id="password"
-          aria-label="Password"
-          placeholder="Password"
-          autocomplete="current-password"
-          required
-        />
-        <button type="button" onclick="register()">
-          <span class="material-icons" aria-hidden="true">person_add</span>
-          Register
-        </button>
-        <button type="button" onclick="login()">
-          <span class="material-icons" aria-hidden="true">login</span> Login
-        </button>
-      </section>
+      <div class="auth-wrapper">
+        <section class="auth-section glass-card auth-glow" tabindex="-1">
+          <div class="auth-header">
+            <i class="fa-solid fa-circle-check auth-logo"></i>
+            <h2 class="auth-main-title">Welcome to To-Do App</h2>
+            <p class="auth-subtitle">Organize your day, stay productive!</p>
+          </div>
+          <div class="auth-tabs">
+            <button type="button" id="showRegister" class="active" onclick="showAuthTab('register')">
+              <i class="fa-solid fa-user-plus"></i> Register
+            </button>
+            <button type="button" id="showLogin" onclick="showAuthTab('login')">
+              <i class="fa-solid fa-right-to-bracket"></i> Login
+            </button>
+          </div>
+          <div id="authMessage" class="auth-message"></div>
+          <form id="registerForm" class="auth-form" autocomplete="off" onsubmit="event.preventDefault(); register();">
+            <div class="input-group floating-label">
+              <i class="fa-solid fa-envelope input-icon"></i>
+              <input type="email" id="registerEmail" required autocomplete="off" placeholder=" " />
+              <label for="registerEmail">Email</label>
+            </div>
+            <div class="input-group floating-label">
+              <i class="fa-solid fa-lock input-icon"></i>
+              <input type="password" id="registerPassword" required autocomplete="off" placeholder=" " />
+              <label for="registerPassword">Password</label>
+              <span class="toggle-password" onclick="togglePassword('registerPassword', this)">
+                <i class="fa-solid fa-eye"></i>
+              </span>
+            </div>
+            <div class="input-group floating-label">
+              <i class="fa-solid fa-lock input-icon"></i>
+              <input type="password" id="registerConfirm" required autocomplete="off" placeholder=" " />
+              <label for="registerConfirm">Confirm Password</label>
+              <span class="toggle-password" onclick="togglePassword('registerConfirm', this)">
+                <i class="fa-solid fa-eye"></i>
+              </span>
+            </div>
+            <button type="submit" class="auth-btn" id="registerBtn">
+              <i class="fa-solid fa-user-plus"></i> Register
+              <span class="spinner hidden" id="registerSpinner"></span>
+            </button>
+          </form>
+          <form id="loginForm" class="auth-form hidden" autocomplete="off" onsubmit="event.preventDefault(); login();">
+            <div class="form-welcome">
+              <i class="fa-solid fa-right-to-bracket" style="font-size:2rem;color:#36d1c4;"></i>
+              <h3 style="margin:0;color:#4f46e5;">Login to your account</h3>
+            </div>
+            <div class="input-group floating-label">
+              <i class="fa-solid fa-envelope input-icon"></i>
+              <input type="email" id="loginEmail" required autocomplete="off" placeholder=" " />
+              <label for="loginEmail">Email</label>
+            </div>
+            <div class="input-group floating-label">
+              <i class="fa-solid fa-lock input-icon"></i>
+              <input type="password" id="loginPassword" required autocomplete="off" placeholder=" " />
+              <label for="loginPassword">Password</label>
+              <span class="toggle-password" onclick="togglePassword('loginPassword', this)">
+                <i class="fa-solid fa-eye"></i>
+              </span>
+            </div>
+            <button type="submit" class="auth-btn" id="loginBtn">
+              <i class="fa-solid fa-right-to-bracket"></i> Login
+              <span class="spinner hidden" id="loginSpinner"></span>
+            </button>
+          </form>
+        </section>
+      </div>
 
       <section
         aria-labelledby="tasks-section-label"
@@ -108,10 +140,10 @@
             <option value="High">🔴 High Priority</option>
           </select>
           <button type="submit" id="addTaskBtn" aria-live="polite" aria-busy="false">
-            <span class="material-icons" aria-hidden="true">add_task</span> Add Task
+            <i class="fa-solid fa-square-plus"></i> Add Task
           </button>
           <button type="button" id="saveTaskBtn" class="hidden" onclick="saveTask()" aria-live="polite" aria-busy="false">
-            <span class="material-icons" aria-hidden="true">save</span> Save
+            <i class="fa-solid fa-floppy-disk"></i> Save
           </button>
           <button
             type="button"
@@ -120,7 +152,7 @@
             aria-label="Toggle dark mode"
             id="darkModeToggle"
           >
-            <span class="material-icons" aria-hidden="true">dark_mode</span>
+            <i class="fa-solid fa-moon"></i>
             Toggle Dark Mode
           </button>
         </form>
@@ -154,6 +186,166 @@
       preload="auto"
       aria-hidden="true"
     ></audio>
+    <script>
+      // Function to handle showing/hiding the icon
+      function toggleInputIconVisibility(inputElement) {
+          const inputGroup = inputElement.closest('.input-group');
+          if (inputGroup) { // Ensure inputGroup exists
+              if (inputElement.value.trim() !== '') {
+                  inputGroup.classList.add('hide-icon');
+              } else {
+                  inputGroup.classList.remove('hide-icon');
+              }
+          }
+      }
+
+      // showAuthTab function (updated to trigger icon visibility update)
+      function showAuthTab(tab) {
+        document.getElementById('loginForm').classList.add('hidden');
+        document.getElementById('registerForm').classList.add('hidden');
+        document.getElementById('showLogin').classList.remove('active');
+        document.getElementById('showRegister').classList.remove('active');
+        document.getElementById('authMessage').style.display = 'none';
+
+        // Clear values and then re-evaluate icon visibility for ALL auth inputs
+        document.querySelectorAll('.auth-form input').forEach(i => {
+            i.value = '';
+            i.blur();
+            toggleInputIconVisibility(i); // Re-evaluate icon visibility after clearing
+        });
+
+        if (tab === 'login') {
+          document.getElementById('loginForm').classList.remove('hidden');
+          document.getElementById('showLogin').classList.add('active');
+        } else {
+          document.getElementById('registerForm').classList.remove('hidden');
+          document.getElementById('showRegister').classList.add('active');
+        }
+      }
+
+      function togglePassword(inputId, el) {
+        const input = document.getElementById(inputId);
+        const icon = el.querySelector('i');
+        if (input.type === "password") {
+          input.type = "text";
+          icon.classList.remove('fa-eye');
+          icon.classList.add('fa-eye-slash');
+        } else {
+          input.type = "password";
+          icon.classList.remove('fa-eye-slash');
+          icon.classList.add('fa-eye');
+        }
+      }
+
+      function showAuthMessage(msg, success = false) {
+        const el = document.getElementById('authMessage');
+        el.textContent = msg;
+        el.className = 'auth-message' + (success ? ' success' : '');
+        el.style.display = 'block';
+      }
+
+      async function register() {
+        const email = document.getElementById("registerEmail").value;
+        const password = document.getElementById("registerPassword").value;
+        const confirm = document.getElementById("registerConfirm").value;
+        if (password !== confirm) {
+          showAuthMessage("Passwords do not match.");
+          return;
+        }
+        document.getElementById("registerBtn").disabled = true;
+        document.getElementById("registerSpinner").classList.remove("hidden");
+        try {
+          const res = await fetch("https://todo-app-full-6.onrender.com/api/users/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email,
+              password,
+              username: email.split("@")[0],
+            }),
+          });
+          const data = await res.json();
+          if (res.ok) {
+            showAuthMessage(data.message || "Registered successfully!", true);
+            setTimeout(() => {
+              showAuthTab('login');
+              showAuthMessage("Registration successful! Please log in.", true);
+            }, 1200);
+          } else {
+            showAuthMessage(data.message || "Registration failed.");
+          }
+        } catch (err) {
+          showAuthMessage("Network error. Please try again.");
+        }
+        document.getElementById("registerBtn").disabled = false;
+        document.getElementById("registerSpinner").classList.add("hidden");
+      }
+
+      async function login() {
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
+        document.getElementById("loginBtn").disabled = true;
+        document.getElementById("loginSpinner").classList.remove("hidden");
+        try {
+          const res = await fetch("https://todo-app-full-6.onrender.com/api/users/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email,
+              password,
+            }),
+          });
+          const data = await res.json();
+          if (data.token) {
+            // Success: hide auth, show tasks, show navbar, etc.
+            document.querySelector(".auth-section").classList.add("hidden");
+            document.querySelector(".task-section").classList.remove("hidden");
+            showNavbar(email);
+            getTasks();
+          } else {
+            showAuthMessage(data.message || "Login failed.");
+          }
+        } catch (err) {
+          showAuthMessage("Network error. Please try again.");
+        }
+        document.getElementById("loginBtn").disabled = false;
+        document.getElementById("loginSpinner").classList.add("hidden");
+      }
+
+      // Attach event listeners to your email and password inputs
+      document.addEventListener('DOMContentLoaded', () => {
+          // For Register Form
+          const registerEmailInput = document.getElementById('registerEmail');
+          const registerPasswordInput = document.getElementById('registerPassword');
+          const registerConfirmInput = document.getElementById('registerConfirm');
+
+          // For Login Form
+          const loginEmailInput = document.getElementById('loginEmail');
+          const loginPasswordInput = document.getElementById('loginPassword');
+
+          // Add event listeners for 'input' event and initial check on load
+          if (registerEmailInput) {
+              registerEmailInput.addEventListener('input', () => toggleInputIconVisibility(registerEmailInput));
+              toggleInputIconVisibility(registerEmailInput); // Initial check
+          }
+          if (registerPasswordInput) {
+              registerPasswordInput.addEventListener('input', () => toggleInputIconVisibility(registerPasswordInput));
+              toggleInputIconVisibility(registerPasswordInput); // Initial check
+          }
+          if (registerConfirmInput) {
+              registerConfirmInput.addEventListener('input', () => toggleInputIconVisibility(registerConfirmInput));
+              toggleInputIconVisibility(registerConfirmInput); // Initial check
+          }
+          if (loginEmailInput) {
+              loginEmailInput.addEventListener('input', () => toggleInputIconVisibility(loginEmailInput));
+              toggleInputIconVisibility(loginEmailInput); // Initial check
+          }
+          if (loginPasswordInput) {
+              loginPasswordInput.addEventListener('input', () => toggleInputIconVisibility(loginPasswordInput));
+              toggleInputIconVisibility(loginPasswordInput); // Initial check
+          }
+      });
+    </script>
     <script src="auth.js"></script>
     <script src="api.js"></script>
     <script src="script.js"></script>
